@@ -1,10 +1,19 @@
-require("dotenv").config();
-const express = require("express");
+import express from "express";
+import cors from "cors";
+import { config as dotenvConfig } from "dotenv";
+import Stripe from "stripe";
+
+
+// Initialize dotenv to load environment variables
+dotenvConfig();
+
+// Create an instance of the express app
 const app = express();
-const cors = require("cors");
 const port = 3000;
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// Initialize Stripe
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 
 // Middleware to parse JSON request bodies (if you need it in other parts of the app)
 app.use(express.json());
@@ -52,3 +61,5 @@ app.post("/create_checkout_session", async (req, res) => {
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
+
+export default app;
