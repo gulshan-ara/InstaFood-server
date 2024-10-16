@@ -22,6 +22,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options("*", cors());
 
 // Home route
 app.get("/", (req, res) => {
