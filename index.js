@@ -8,21 +8,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // Middleware to parse JSON request bodies (if you need it in other parts of the app)
 app.use(express.json());
-
-
-const allowedOrigins = ['http://localhost:1234']; // Add other origins if needed
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors());
+app.use(cors());
 
 // Home route
 app.get("/", (req, res) => {
@@ -30,6 +16,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/create_checkout_session", async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
   try {
     const products = req.body.products;
     console.log(products);
