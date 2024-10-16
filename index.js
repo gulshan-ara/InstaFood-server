@@ -28,7 +28,7 @@ app.post("/create_checkout_session", async (req, res) => {
       price_data: {
         currency: "inr",
         product_data: {
-          name: product.card?.info?.name, // Assuming product info is nested like this
+          name: product.card?.info?.name, 
         },
         unit_amount: Math.round(
           product.card?.info?.price || product.card?.info?.defaultPrice
@@ -38,20 +38,28 @@ app.post("/create_checkout_session", async (req, res) => {
     }));
 
     const session = await stripe.checkout.sessions.create({
+      ui_mode: 'embedded',
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: "https://your-success-url.com", // Update this with your success URL
-      cancel_url: "https://your-cancel-url.com", // Update this with your cancel URL
+      return_url: `${YOUR_DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}`
     });
 
-    // Return the session ID to the frontend
-    // res.status(200).json({ id: session.id });
-    res.json({url: session.url})
+    res.send({clientSecret: session.client_secret});
+
   } catch (error) {
     console.error("Error creating session:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+app.get('/session-status', async (req, res) => {
+  const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
+
+  res.send({
+    status: session.status,
+    customer_email: session.customer_details.email
+  });
 });
 
 // Start the server
