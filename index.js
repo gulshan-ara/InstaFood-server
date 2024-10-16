@@ -8,7 +8,11 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // Middleware to parse JSON request bodies (if you need it in other parts of the app)
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:1234", "https://checkout.stripe.com"],
+  })
+);
 
 // Home route
 app.get("/", (req, res) => {
@@ -16,7 +20,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/create_checkout_session", async (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*');
   try {
     const products = req.body.products;
     console.log(products);
@@ -27,8 +30,9 @@ app.post("/create_checkout_session", async (req, res) => {
         product_data: {
           name: product.card?.info?.name, // Assuming product info is nested like this
         },
-        unit_amount:
-          Math.round(product.card?.info?.price || product.card?.info?.defaultPrice),
+        unit_amount: Math.round(
+          product.card?.info?.price || product.card?.info?.defaultPrice
+        ),
       },
       quantity: product.quantity,
     }));
