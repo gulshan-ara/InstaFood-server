@@ -2,29 +2,27 @@
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const express = require("express");
+const cors = require("cors");
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
 const calculateOrderAmount = (items) => {
-  let total = 0;
-  items.forEach((item) => {
-    const amount = item.card?.info?.price || item.card?.info?.defaultPrice;
-    total += amount;
-  });
-  return total;
+  return 33800;
 };
 
 app.post("/create-payment-intent", async (req, res) => {
   const { items } = req.body;
+  console.log(calculateOrderAmount(items));
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: calculateOrderAmount(items),
-    currency: "usd",
+    currency: "inr",
   });
 
   res.send({
