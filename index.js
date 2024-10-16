@@ -46,7 +46,8 @@ app.post("/create_checkout_session", async (req, res) => {
     });
 
     // Return the session ID to the frontend
-    res.status(200).json({ id: session.id });
+    // res.status(200).json({ id: session.id });
+    res.json({url: session.url})
   } catch (error) {
     console.error("Error creating session:", error);
     res.status(500).json({ error: "Internal Server Error" });
