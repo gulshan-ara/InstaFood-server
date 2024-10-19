@@ -11,18 +11,21 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-const calculateOrderAmount = (items) => {
-  return 33800;
-};
-
 app.post("/create-payment-intent", async (req, res) => {
-  const { items } = req.body;
-  console.log(calculateOrderAmount(items));
+  const { totalAmount } = req.body;
+  
+  // Check if totalAmount is a valid number and >= 1
+  if (!totalAmount || isNaN(totalAmount) || totalAmount < 1) {
+    return res.status(400).send({ error: "Invalid or too low total amount" });
+  }
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(items),
+    amount: Math.round(totalAmount * 100),
     currency: "inr",
+    automatic_payment_methods: {
+      enabled: true,
+    },
   });
 
   res.send({
