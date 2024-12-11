@@ -5,7 +5,12 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://instafood-nine.vercel.app", "http://localhost:3000"],
+    credentials: true,
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -13,7 +18,7 @@ app.get("/", (req, res) => {
 
 app.post("/create-payment-intent", async (req, res) => {
   const { totalAmount } = req.body;
-  
+
   // Check if totalAmount is a valid number and >= 1
   if (!totalAmount || isNaN(totalAmount) || totalAmount < 1) {
     return res.status(400).send({ error: "Invalid or too low total amount" });
