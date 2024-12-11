@@ -7,8 +7,9 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://instafood-nine.vercel.app", "http://localhost:3000"],
-    credentials: true,
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
